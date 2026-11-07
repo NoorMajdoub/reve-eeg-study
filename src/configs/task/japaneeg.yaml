@@ -1,0 +1,37 @@
+# NOTE: electrode positions for this task are an APPROXIMATION -- real
+# coordinates borrowed from an unrelated standard 128-ch system (Biosemi128),
+# NOT JapanEEG's true (unpublished) electrode layout. See
+# dataloader_japaneeg.py and extract_japaneeg_positions.py for details.
+# Results from this task should be reported with that caveat, and re-run if
+# the dataset authors provide real coordinates.
+name: japaneeg
+n_chans: 128
+duration: 10
+classifier:
+  n_classes: 2
+  pooling: "no"
+data_loader:
+  dataset:
+    _target_: downstream_tasks.dataloader_japaneeg.JapanEEGDataset
+    path: ${data_root}/japaneeg_processed
+    positions: /scratch/nourmaj/japaneeg_positions_APPROXIMATE.npy
+  batch_size: 32
+  seed: ${seed}
+linear_probing:
+  n_epochs: 20
+  patience: 3
+  warmup_epochs: 2
+  mixup: True
+  dropout: 0.1
+  optimizer:
+    lr: 1e-4
+    weight_decay: 1e-2
+fine_tuning:
+  n_epochs: 25
+  patience: 3
+  warmup_epochs: 2
+  mixup: True
+  dropout: 0.3
+  optimizer:
+    lr: 1e-4
+clip: 100

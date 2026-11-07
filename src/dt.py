@@ -62,8 +62,12 @@ def train_stage(  # noqa: C901, PLR0912, PLR0913, PLR0915
         device=config.trainer.device,
         enabled="cuda" in config.trainer.device and "16" in config.get("torch_dtype", "fp32"),
     )
-    criterion = nn.CrossEntropyLoss()
     device = config.trainer.device
+    if config.task.name == "chbmit":
+        class_weights = torch.tensor([0.503, 75.76], dtype=torch.float32).to(device)
+        criterion = nn.CrossEntropyLoss(weight=class_weights)
+    else:
+        criterion = nn.CrossEntropyLoss()
 
     dtype_str = config.trainer.get("torch_dtype", "fp32")
     torch_dtype = dtype_map.get(dtype_str)
@@ -231,7 +235,8 @@ def train_one_epoch(  # noqa: PLR0913
 
         scaler.scale(loss).backward()
         scaler.unscale_(optimizer)
-        torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=config.trainer.clip_grad)
+        if config.trainer.clip_grad is not None:
+            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=config.trainer.clip_grad)
         scaler.step(optimizer)
         scale = scaler.get_scale()
         scaler.update()

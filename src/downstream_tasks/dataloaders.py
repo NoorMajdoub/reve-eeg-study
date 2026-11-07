@@ -19,10 +19,11 @@ from downstream_tasks.position_utils import load_positions
 
 
 class LMDBDataset(Dataset):
-    def __init__(self, path, positions=None, electrodes=None, mode="train", scale_factor=100):
+    def __init__(self, path, positions=None, electrodes=None, mode="train", scale_factor=100, flatten_chunks=False):
         super(LMDBDataset, self).__init__()
         self.path = path
         self.scale_factor = scale_factor
+        self.flatten_chunks = flatten_chunks
 
         # Open environment briefly to load keys, then close it to avoid issues with multi-processing
         env = lmdb.open(path, readonly=True, lock=False, readahead=True, meminit=False, max_readers=1024)
@@ -50,6 +51,8 @@ class LMDBDataset(Dataset):
         with self.db.begin(write=False) as txn:
             pair = pickle.loads(txn.get(key.encode()))
         data = pair["sample"]
+        if self.flatten_chunks:
+            data = data.reshape(data.shape[0], -1)
         label = pair["label"]
 
         ret = {

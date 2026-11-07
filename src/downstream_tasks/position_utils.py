@@ -1,5 +1,6 @@
 """Utilities to resolve electrode names or files into 3D position tensors."""
 
+import os
 from functools import lru_cache
 
 import numpy as np
@@ -13,7 +14,7 @@ def _get_position_model():
         "brain-bzh/reve-positions",
         trust_remote_code=True,
         dtype="auto",
-        cache_dir=".cache",
+        cache_dir=os.environ.get("HF_HUB_CACHE", ".cache"),
     )
 
 

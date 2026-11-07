@@ -1,0 +1,36 @@
+# NOTE: only the first 0.25s (50 of 200 timepoints) of every sample is real
+# recorded signal -- the rest is zero-padding, required because REVE's
+# encoder has a fixed patch_size=200 and cannot process shorter sequences.
+# See dataloader_thoughtviz.py for details. Results from this task are a
+# known degraded/non-standard comparison vs. the other domains.
+name: thoughtviz
+n_chans: 14
+duration: 1.0
+classifier:
+  n_classes: 10
+  pooling: last
+data_loader:
+  dataset:
+    _target_: downstream_tasks.dataloader_thoughtviz.ThoughtVizDataset
+    path: ${data_root}/thoughtviz_processed
+    electrodes: ['AF3', 'F7', 'F3', 'FC5', 'T7', 'P7', 'O1', 'O2', 'P8', 'T8', 'FC6', 'F4', 'F8', 'AF4']
+  batch_size: 32
+  seed: ${seed}
+linear_probing:
+  n_epochs: 20
+  patience: 5
+  warmup_epochs: 3
+  mixup: True
+  dropout: 0.1
+  optimizer:
+    lr: 1e-4
+    weight_decay: 1e-2
+fine_tuning:
+  n_epochs: 50
+  patience: 5
+  warmup_epochs: 3
+  mixup: True
+  dropout: 0.4
+  optimizer:
+    lr: 1e-4
+clip: 100

@@ -1,0 +1,42 @@
+name: caueeg
+n_chans: 19
+duration: 10
+
+classifier:
+  n_classes: 3
+  pooling: last
+  dropout: 0.1
+
+data_loader:
+  dataset:
+    _target_: downstream_tasks.dataloader_caueeg.CAUEEGDataset
+    path: /lustre10/scratch/nourmaj/caueeg_reve_processed
+    # Same order as the EDF channels (Fp1-AVG ... PZ-AVG). Plain names on purpose:
+    # 'X-AVG' would be parsed as a bipolar pair by position_utils. Old 10-20
+    # labels mapped to modern ones: T3->T7, T5->P7, T4->T8, T6->P8.
+    electrodes: ['Fp1', 'F3', 'C3', 'P3', 'O1', 'Fp2', 'F4', 'C4', 'P4', 'O2',
+                 'F7', 'T7', 'P7', 'F8', 'T8', 'P8', 'Fz', 'Cz', 'Pz']
+  batch_size: 32
+  seed: ${seed}
+  splits: ["train", "val", "test"]
+
+linear_probing:
+  n_epochs: 20
+  patience: 2
+  warmup_epochs: 3
+  mixup: True
+  dropout: 0.05
+  optimizer:
+    lr: 1e-4
+    weight_decay: 1e-2
+
+fine_tuning:
+  n_epochs: 50
+  patience: 2
+  warmup_epochs: 5
+  mixup: True
+  dropout: 0.3
+  optimizer:
+    lr: 1e-4
+
+clip: 100

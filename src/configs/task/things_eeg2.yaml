@@ -1,0 +1,41 @@
+name: things_eeg2
+n_chans: 17
+duration: 1
+
+classifier:
+  n_classes: 200
+  pooling: last
+  dropout: 0.1
+
+data_loader:
+  dataset:
+    _target_: downstream_tasks.dataloader_things_eeg2.ThingsEEG2Dataset
+    path: /lustre10/scratch/nourmaj/things_eeg2_reve_processed
+    # Order = 'ch_names' in the THINGS-EEG2 preprocessed .npy files
+    electrodes: ['Pz', 'P3', 'P7', 'O1', 'Oz', 'O2', 'P4', 'P8', 'P1', 'P5',
+                 'PO7', 'PO3', 'POz', 'PO4', 'PO8', 'P6', 'P2']
+  batch_size: 32
+  seed: ${seed}
+  splits: ["train", "val", "test"]
+
+# Uniform study protocol (same as every other dataset / Table 3).
+linear_probing:
+  n_epochs: 20
+  patience: 2
+  warmup_epochs: 3
+  mixup: True
+  dropout: 0.05
+  optimizer:
+    lr: 1e-4
+    weight_decay: 1e-2
+
+fine_tuning:
+  n_epochs: 50
+  patience: 2
+  warmup_epochs: 5
+  mixup: True
+  dropout: 0.3
+  optimizer:
+    lr: 1e-4
+
+clip: 100

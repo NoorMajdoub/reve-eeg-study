@@ -1,0 +1,17 @@
+
+__pycache__/
+*.bak
+*.pth
+*.pt
+*.ckpt
+*.npz
+*.npy
+*.pkl
+*.lmdb
+*.mdb
+*.edf
+*.mat
+*.db
+slurm-*.out
+outputs/
+reve_outputs/

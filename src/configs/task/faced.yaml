@@ -12,6 +12,7 @@ data_loader:
     path: ${data_root}/FACED/processed
     electrodes: ['FP1', 'FP2', 'FZ', 'F3', 'F4', 'F7', 'F8', 'FC1', 'FC2', 'FC5', 'FC6', 'CZ', 'C3', 'C4', 'T3', 'T4', 'CP1', 'CP2', 'CP5', 'CP6', 'PZ', 'P3', 'P4', 'T5', 'T6', 'PO3', 'PO4', 'OZ', 'O1', 'O2', 'A2', 'A1']
     scale_factor: 1000.0
+    flatten_chunks: true
   batch_size: 64
   seed: ${seed}
   splits: ["train", "val", "test"]

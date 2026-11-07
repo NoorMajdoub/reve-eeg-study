@@ -1,0 +1,31 @@
+name: clinical
+n_chans: 19
+duration: 10
+classifier:
+  n_classes: 2
+  pooling: "no"
+data_loader:
+  dataset:
+    _target_: downstream_tasks.dataloader_clinical.ClinicalDataset
+    path: ${data_root}/ds004504_processed
+    electrodes: ['Fp1', 'Fp2', 'F3', 'F4', 'C3', 'C4', 'P3', 'P4', 'O1', 'O2', 'F7', 'F8', 'T3', 'T4', 'T5', 'T6', 'Fz', 'Cz', 'Pz']
+  batch_size: 32
+  seed: ${seed}
+linear_probing:
+  n_epochs: 20
+  patience: 2
+  warmup_epochs: 3
+  mixup: True
+  dropout: 0.1
+  optimizer:
+    lr: 1e-4
+    weight_decay: 1e-2
+fine_tuning:
+  n_epochs: 50
+  patience: 2
+  warmup_epochs: 5
+  mixup: True
+  dropout: 0.4
+  optimizer:
+    lr: 1e-4
+clip: 100

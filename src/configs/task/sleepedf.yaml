@@ -1,0 +1,41 @@
+name: sleepedf
+n_chans: 2
+duration: 30
+
+classifier:
+  n_classes: 5
+  pooling: last
+  dropout: 0.1
+
+data_loader:
+  dataset:
+    _target_: downstream_tasks.dataloader_sleepedf.SleepEDFDataset
+    path: /lustre10/scratch/nourmaj/sleepedf_reve_processed
+    electrodes: ['Fpz-Cz', 'Pz-Oz']
+    clip: 15.0
+    max_sat_frac: 0.5     # drop epochs >50% saturated (label-blind QC)
+    max_scale_uv: 100.0   # drop off-scale recordings (robust scale >100 uV)
+  batch_size: 32
+  seed: ${seed}
+  splits: ["train", "val", "test"]
+
+linear_probing:
+  n_epochs: 20
+  patience: 2
+  warmup_epochs: 3
+  mixup: True
+  dropout: 0.05
+  optimizer:
+    lr: 1e-4
+    weight_decay: 1e-2
+
+fine_tuning:
+  n_epochs: 50
+  patience: 2
+  warmup_epochs: 5
+  mixup: True
+  dropout: 0.3
+  optimizer:
+    lr: 1e-4
+
+clip: 100

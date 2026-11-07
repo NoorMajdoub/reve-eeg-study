@@ -100,10 +100,11 @@ def _load_path(seq_dir, label_dir):
 
     for subject_seq, subject_label in zip(subject_dirs_seq, subject_dirs_labels):
         subject_pairs = []
-        seq_fnames = os.listdir(subject_seq)
-        label_fnames = os.listdir(subject_label)
-        for seq_fname, label_fname in zip(seq_fnames, label_fnames):
-            subject_pairs.append((os.path.join(subject_seq, seq_fname), os.path.join(subject_label, label_fname)))
+        seq_fnames = sorted(os.listdir(subject_seq))
+        label_fnames_set = set(os.listdir(subject_label))
+        for seq_fname in seq_fnames:
+            assert seq_fname in label_fnames_set, f"Missing label file for {seq_fname} in {subject_label}"
+            subject_pairs.append((os.path.join(subject_seq, seq_fname), os.path.join(subject_label, seq_fname)))
         seqs_labels_path_pair.append(subject_pairs)
     return seqs_labels_path_pair
 
